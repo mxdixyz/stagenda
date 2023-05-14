@@ -19,8 +19,8 @@ static char agendaFile[128];
 static FILE *fptr;
 static struct {
 	char title[512],
-		 dueDate[128],
-		 class[512];
+	     dueDate[128],
+	     class[512];
 } agenda[5];
 static int agendaSize=sizeof(agenda)/sizeof(agenda[0]);
 
@@ -37,7 +37,7 @@ main(int argc, char *argv[]) {
 			return EXIT_SUCCESS;
 		} else {
 			fprintf(stderr, "Invalid arguments\n"
-							"Use \"-h\" or \"--help\" for help\n"
+			                 "Use \"-h\" or \"--help\" for help\n"
 			);
 			return EXIT_FAILURE;
 		}
@@ -48,11 +48,11 @@ main(int argc, char *argv[]) {
 	int num, items;
 	
 	printf("Welcome to stagenda\n"
-		   "Ctrl+D (EOF) to exit\n\n"
+	       "Ctrl+D (EOF) to exit\n\n"
 	);
 	while(1) {
 		printf("Options: read, write, delete\n"
-			   "> "
+		       "> "
 		);
 		eof=scanf(" %1023[^\n]", input);
 		if(eof==EOF) break;
@@ -62,7 +62,7 @@ main(int argc, char *argv[]) {
 			printf("Enter entry number: ");
 			scanf("%2i", &num);
 			num--;
-			if(num >= agendaSize || num > count() || num < 0) printf("Invalid selection\n");
+			if(num >= agendaSize || num > count() || num < 0) fprintf(stderr, "Invalid selection\n");
 			else {
 				memset(input, '\0', sizeof(input));
 
@@ -85,7 +85,7 @@ main(int argc, char *argv[]) {
 			printf("Enter entry number: ");
 			scanf("%2i", &num);
 			num--;
-			if(num >= agendaSize || num >= count() || num < 0) printf("Invalid selection\n");
+			if(num >= agendaSize || num >= count() || num < 0) fprintf(stderr, "Invalid selection\n");
 			else {
 				items=count();
 				for(int i=num; i<items+1; i++) {
@@ -99,7 +99,7 @@ main(int argc, char *argv[]) {
 				memset(agenda[items].class, '\0', sizeof(agenda[items].class));
 			}
 		}
-		  else fprintf(stderr, "Invalid option\n");
+		else fprintf(stderr, "Invalid option\n");
 		memset(input, '\0', sizeof(input));
 		printf("\n");
 	}
@@ -120,9 +120,9 @@ void
 init(void) {
 	struct stat st={0};
 	sprintf(agendaFile, "%s/.config/stagenda/", getenv("HOME"));
-	if(stat(agendaFile, &st)==-1) mkdir(agendaFile, 0700);
+	if(stat(agendaFile, &st) == -1) mkdir(agendaFile, 0700);
 	strcat(agendaFile, "agenda");
-	if(fopen(agendaFile, "r")==NULL) {
+	if(fopen(agendaFile, "r") == NULL) {
 		fptr=fopen(agendaFile, "w+");
 		fprintf(fptr, "Empty Agenda\n");
 		fclose(fptr);
@@ -144,7 +144,7 @@ populateAgenda(void) {
 	fptr=fopen(agendaFile, "r");
 
 	c=fgetc(fptr);
-	while(c!=EOF) {
+	while(c != EOF) {
 		s[0]=c;
 		if(atoi(s) != 0 && atoi(s) != x) {
 			x=atoi(s);
@@ -185,9 +185,9 @@ populateAgenda(void) {
 void
 printHelp(void) {
 	printf("Usage: stagenda [OPTION]\n\n"
-		   "list\t\tPrints agenda; non-interactive\n"
-		   "-h, --help\tPrints this menu\n\n"
-		   "All output is printed to stdout or stderr\n"
+	       "list\t\tPrints agenda; non-interactive\n"
+	       "-h, --help\tPrints this menu\n\n"
+	       "All output is printed to stdout or stderr\n"
 	);
 }
 
@@ -204,19 +204,21 @@ void
 printAgenda(void) {
 	if(!(count()>0)) {
 		printf("No entries found\n"
-			   "All caught up!\n"
+		       "All caught up!\n"
 		);
 		return;
 	}
 	printf("%s's Agenda\n"
-		   "===============\n\n",
-		   getenv("USER")
+	       "===============\n\n",
+	        getenv("USER")
 	);
 	for(int i=0; i<count(); i++)
 		printf("%i.) %s\n"
-			   "Due: %s\n"
-			   "Class: %s\n\n",
-			   i+1, agenda[i].title, agenda[i].dueDate, agenda[i].class
+		       "Due: %s\n"
+		       "Class: %s\n\n",
+		       i+1, agenda[i].title,
+		       agenda[i].dueDate,
+		       agenda[i].class
 	);
 }
 
@@ -234,11 +236,11 @@ writeFile(void) {
 	fptr=fopen(agendaFile, "w+");
 	for(int i=0; i<count(); i++) {
 		fprintf(fptr, "%i.) title=%s\n"
-					  "%i.) date=%s\n"
-					  "%i.) class=%s\n\n",
-					  i+1, agenda[i].title,
-					  i+1, agenda[i].dueDate,
-					  i+1, agenda[i].class
+			      "%i.) date=%s\n"
+			      "%i.) class=%s\n\n",
+			      i+1, agenda[i].title,
+			      i+1, agenda[i].dueDate,
+			      i+1, agenda[i].class
 		);
 	}
 	fclose(fptr);
@@ -250,13 +252,13 @@ writeFile(void) {
  *  Counts sets of items in "agenda" struct.
  *
  *  @param Void.
- *  @return items - Number of agenda items
+ *  @return items - Number of agenda items.
  */
 int
 count(void) {
 	int items=0;
 	for(int i=0; i<agendaSize; i++) {
-		if(agenda[i].title[0]!='\0') items++;
+		if(agenda[i].title[0] != '\0') items++;
 	}
 	return items;
 }
