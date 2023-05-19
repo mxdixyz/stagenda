@@ -15,9 +15,9 @@ void init(void),
 
 int count(void);
 
-static char agendaFile[128];
-static FILE *fptr;
-static struct {
+char agendaFile[128];
+FILE *fptr;
+struct {
 	char title[512],
 	     dueDate[128],
 	     class[512];
@@ -124,7 +124,7 @@ init(void) {
 	strcat(agendaFile, "agenda");
 	if(fopen(agendaFile, "r") == NULL) {
 		fptr=fopen(agendaFile, "w+");
-		fprintf(fptr, "Empty Agenda\n");
+		fprintf(fptr, "\n");
 		fclose(fptr);
 	}
 }
@@ -140,14 +140,14 @@ init(void) {
 void
 populateAgenda(void) {
 	char buffer[1024], c, s[1];
-	int x=0, items=0;
+	int p=0, items=0;
 	fptr=fopen(agendaFile, "r");
 
 	c=fgetc(fptr);
 	while(c != EOF) {
 		s[0]=c;
-		if(atoi(s) != 0 && atoi(s) != x) {
-			x=atoi(s);
+		if(atoi(s) != 0 && atoi(s) <= p) {
+			p=atoi(s);
 			c=fgetc(fptr);
 			if(c == '.') {
 				c=fgetc(fptr);
@@ -155,7 +155,7 @@ populateAgenda(void) {
 			}
 		}
 		if(items > agendaSize) {
-			printf("Too many items");
+			fprintf(stderr, "stagenda: Too many items\n");
 			exit(EXIT_FAILURE);
 		}
 		c=fgetc(fptr);
