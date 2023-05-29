@@ -2,9 +2,9 @@
 CC = gcc
 PREFIX = /usr/local
 
-
 all:
-	$(CC) -g -o stagenda stagenda.c
+	$(CC) -g -c stagenda.c
+	$(CC) -g -o stagenda stagenda.o
 
 install: all
 	mkdir -p "$(PREFIX)/bin"
@@ -13,3 +13,6 @@ install: all
 
 uninstall:
 	rm -f "$(PREFIX)/bin/stagenda"
+
+clean:
+	rm -f stagenda stagenda.o
