@@ -8,8 +8,8 @@
 
 struct {
 	char title[512],
-		 date[128],
-		 class[512];
+	     date[128],
+	     class[512];
 } agenda[5];
 int agSize=sizeof(agenda)/sizeof(agenda[0]), items=0;
 FILE *fptr;
@@ -92,9 +92,9 @@ populate(void) {
 void
 printHelp(void) {
 	printf("Usage: stagenda [OPTION]\n\n"	
-		   "list\t\tPrints agenda; non-interactive\n"
-		   "-h, --help\tPrints this menu\n\n"
-		   "All output is printed to stdout or stderr\n"
+	       "list\t\tPrints agenda; non-interactive\n"
+	       "-h, --help\tPrints this menu\n\n"
+	       "All output is printed to stdout or stderr\n"
 	);
 }
 
@@ -111,19 +111,19 @@ printAg(void) {
 	printf("\n");
 	if(items<=0) {
 		printf("No entries found\n"
-			   "All caught up!\n\n"
+		       "All caught up!\n\n"
 		);
 		return;
 	}
 	printf("%s's agenda\n"
-		   "===============\n\n",
-		   getenv("USER")
+	       "===============\n\n",
+	       getenv("USER")
 	);
 	for(int i=0; i<items; i++) {
 		printf("%i.) %s\n"
-			   "Due: %s\n"
-			   "Class: %s\n\n",
-			   i+1, agenda[i].title, agenda[i].date, agenda[i].class
+		       "Due: %s\n"
+		       "Class: %s\n\n",
+		       i+1, agenda[i].title, agenda[i].date, agenda[i].class
 		);
 	}
 }
@@ -219,11 +219,11 @@ writeFile(void) {
 	fptr=fopen(agFile, "w+");
 	for(int i=0; i<items; i++) {
 		fprintf(fptr, "%i.) title=%s\n"
-					  "%i.) dueDate=%s\n"
-					  "%i.) class=%s\n\n",
-					  i+1, agenda[i].title,
-					  i+1, agenda[i].date,
-					  i+1, agenda[i].class
+			      "%i.) dueDate=%s\n"
+			      "%i.) class=%s\n\n",
+			      i+1, agenda[i].title,
+			      i+1, agenda[i].date,
+			      i+1, agenda[i].class
 		);
 	}
 	fclose(fptr);
@@ -242,7 +242,7 @@ main(int argc, char **args) {
 			return EXIT_SUCCESS;
 		} else {
 			fprintf(stderr, "Invalid argument(s)\n"
-							"Use \"-h\" or \"--help\" for help\n"
+					"Use \"-h\" or \"--help\" for help\n"
 			);
 			return EXIT_FAILURE;
 		}
@@ -252,7 +252,7 @@ main(int argc, char **args) {
 	int e;
 
 	printf("Welcome to stagenda\n"
-		   "Ctrl+D (EOF) to exit\n\n"
+	       "Ctrl+D (EOF) to exit\n\n"
 	);
 	while(1) {
 		printf("Options: read, write, delete\n> ");
