@@ -1,4 +1,4 @@
-// See LICENSE file for copyright and file information.
+// See LICENSE file for copyright and license information.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,7 +26,7 @@ char agFile[512];
  */
 void
 init(void) {
-	struct stat st={0};
+	struct stat st = {0};
 	sprintf(agFile, "%s/.config/stagenda/", getenv("HOME"));
 	if(stat(agFile, &st) == -1)
 		mkdir(agFile, 0700);
@@ -48,23 +48,24 @@ init(void) {
  */
 void
 populate(void) {
-	char buffer[1024], c[1];
+	char buffer[1024], c;
 	fptr=fopen(agFile, "r");
 
-	c[0]=fgetc(fptr);
-	while(c[0] != EOF) {
-		if(atoi(c) > items) {
-			c[0]=fgetc(fptr);
-			if(c[0] == '.') {
-				c[0]=fgetc(fptr);
-				if(c[0] == ')') items++;
+	c=fgetc(fptr);
+	while(c != EOF) {
+		if((int)c-48 > items && (int)c < 53) {
+			c=fgetc(fptr);
+			if(c == '.') {
+				c=fgetc(fptr);
+				if(c == ')')
+					items++;
 			}
 		}
-		c[0]=fgetc(fptr);
+		c=fgetc(fptr);
 	}
 	rewind(fptr);
 
-	if(items>agSize) {
+	if(items > agSize) {
 		fprintf(stderr, "stagenda: Too many items\n");
 		exit(EXIT_FAILURE);
 	}
@@ -108,8 +109,7 @@ printHelp(void) {
  */
 void
 printAg(void) {
-	printf("\n");
-	if(items<=0) {
+	if(items <= 0) {
 		printf("No entries found\n"
 		       "All caught up!\n\n"
 		);
@@ -144,12 +144,13 @@ writeAg(void) {
 	char input[2048];
 
 	printf("\nEntry number: ");
-	scanf("%d,", &num);
+	scanf("%d", &num);
 	num--;
 	if(num > items || num < 0)
-		fprintf(stderr, "Invalid selection\n");
+		fprintf(stderr, "Invalid selection\n\n");
 	else {
-		if(agenda[num].title[0] == '\0') items++;
+		if(agenda[num].title[0] == '\0')
+			items++;
 		printf("Title: ");
 		scanf(" %511[^\n]", input);
 		strcpy(agenda[num].title, input);
@@ -164,8 +165,10 @@ writeAg(void) {
 		scanf(" %511[^\n]", input);
 		strcpy(agenda[num].class, input);
 		memset(input, '\0', sizeof(input));
+
+		system("clear");
+		printf("Entry %d successfully added\n\n", num+1);
 	}
-	printf("\n");
 }
 
 
@@ -186,24 +189,25 @@ deleteAg(void) {
 		printf("\nThere's nothing to delete\n\n");
 		return;
 	}
-
 	printf("\nEnter entry number: ");
 	scanf("%d", &num);
 	num--;
 	if(num >= items || num < 0)
 		fprintf(stderr, "Invalid selection\n\n");
 	else {
-			for(int i=num; i<items; i++) {
-				strcpy(agenda[i].title, agenda[i+1].title);
-				strcpy(agenda[i].date, agenda[i+1].date);
-				strcpy(agenda[i].class, agenda[i+1].class);
-			}
-			memset(agenda[items].title, '\0', sizeof(agenda[items].title));
-			memset(agenda[items].date, '\0', sizeof(agenda[items].date));
-			memset(agenda[items].class, '\0', sizeof(agenda[items].class));
-			items--;
+		for(int i=num; i<items; i++) {
+			strcpy(agenda[i].title, agenda[i+1].title);
+			strcpy(agenda[i].date, agenda[i+1].date);
+			strcpy(agenda[i].class, agenda[i+1].class);
+		}
+		memset(agenda[items].title, '\0', sizeof(agenda[items].title));
+		memset(agenda[items].date, '\0', sizeof(agenda[items].date));
+		memset(agenda[items].class, '\0', sizeof(agenda[items].class));
+		items--;
+
+		system("clear");
+		printf("Entry %d successfully deleted\n\n", num+1);
 	}
-	printf("\n");
 }
 
 /** @brief Writes agenda to file
@@ -233,11 +237,11 @@ int
 main(int argc, char **args) {
 	init();
 	populate();
-	if(argc>1) {
-		if(!strcpy(args[1], "list")) {
+	if(argc > 1) {
+		if(strcmp(args[1], "list") == 0) {
 			printAg();
 			return EXIT_SUCCESS;
-		} else if(!strcpy(args[1], "-h") || !strcpy(args[1], "--help")) {
+		} else if(strcmp(args[1], "-h") == 0 || strcmp(args[1], "--help") == 0) {
 			printHelp();
 			return EXIT_SUCCESS;
 		} else {
@@ -247,10 +251,10 @@ main(int argc, char **args) {
 			return EXIT_FAILURE;
 		}
 	}
-
-	char input[2048];
 	int e;
+	char input[2048];
 
+	system("clear");
 	printf("Welcome to stagenda\n"
 	       "Ctrl+D (EOF) to exit\n\n"
 	);
@@ -259,16 +263,17 @@ main(int argc, char **args) {
 		e=scanf(" %2047[^\n]", input);
 		if(e == EOF)
 			break;
-		if(!strcmp(input, "read"))
+		if(strcmp(input, "read") == 0) {
+			system("clear");
 			printAg();
-		else if(!strcmp(input, "write"))
+		} else if(strcmp(input, "write") == 0)
 			writeAg();
-		else if(!strcmp(input, "delete"))
+		else if(strcmp(input, "delete") == 0)
 			deleteAg();
 		else
 			fprintf(stderr, "Invalid option\n");
 		memset(input, '\0', sizeof(input));
 	}
 	writeFile();
-	printf("\n\n");
+	printf("\nExiting stagenda...\n\n");
 }
